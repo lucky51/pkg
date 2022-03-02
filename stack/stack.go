@@ -2,33 +2,41 @@ package stack
 
 import (
 	"io"
+	"os"
 
 	slist "github.com/lucky51/pkg/list"
 )
 
-type Stack struct {
-	sList *slist.SlinkedList
+type Stack[T any] struct {
+	sList *slist.SlinkedList[T]
 	size  int
 }
 
-func (s *Stack) Pop() (*slist.ListNode, error) {
+// Pop 弹出栈顶元素
+func (s *Stack[T]) Pop() (*slist.ListNode[T], error) {
 	return s.sList.Delete(0)
 }
 
-func (s *Stack) Push(data int) (*slist.ListNode, error) {
+// Push添加元素
+func (s *Stack[T]) Push(data T) (*slist.ListNode[T], error) {
 	return s.sList.Insert(0, data)
 }
-func (s *Stack) Peek() (*slist.ListNode, error) {
+
+// Peek 获取栈顶元素
+func (s *Stack[T]) Peek() (*slist.ListNode[T], error) {
 	return s.sList.Get(0)
 }
-func NewStack() *Stack {
-	var s *slist.SlinkedList = new(slist.SlinkedList)
+
+// NewStack 创建栈
+func NewStack[T any]() *Stack[T] {
+	var s *slist.SlinkedList[T] = new(slist.SlinkedList[T])
 	slist.InitSlinkedList(s)
-	return &Stack{
-		s,
-		0,
+	return &Stack[T]{
+		sList: new(slist.SlinkedList[T]),
 	}
 }
-func (s *Stack) Print(w io.Writer) {
-	s.sList.Print(w)
+
+// Print 打印
+func (s *Stack[T]) Print(w io.Writer) {
+	slist.Print(s.sList, os.Stdout)
 }

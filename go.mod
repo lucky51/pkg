@@ -1,3 +1,3 @@
 module github.com/lucky51/pkg
 
-go 1.17
+go 1.18

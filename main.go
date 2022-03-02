@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/lucky51/pkg/tree"
+	"runtime"
+	"time"
 )
 
 func main() {
@@ -52,13 +52,25 @@ func main() {
 	// fmt.Printf("%v", n2)
 	// s1.Print(os.Stdout)
 
-	root := tree.CreateBiTree()
-	fmt.Printf("%v\n", root)
-	fmt.Println("pre order:")
-	tree.PreOrderTree(root)
-	fmt.Println("middle order:")
-	tree.MiddleOrderTree(root)
-	fmt.Println("post order:")
-	tree.PostOrderTree(root)
+	// root := tree.CreateBiTree()
+	// fmt.Printf("%v\n", root)
+	// fmt.Println("pre order:")
+	// tree.PreOrderTree(root)
+	// fmt.Println("middle order:")
+	// tree.MiddleOrderTree(root)
+	// fmt.Println("post order:")
+	// tree.PostOrderTree(root)
+	runtime.GOMAXPROCS(1)
+
+	for i := 0; i < 1000; i++ {
+
+		go func() {
+
+			fmt.Println(i)
+
+		}()
+	}
+
+	time.Sleep(time.Second * 10)
 
 }
