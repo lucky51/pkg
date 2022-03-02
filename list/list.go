@@ -17,6 +17,12 @@ type ListNode struct {
 	next *ListNode
 }
 
+func (l *ListNode) GetData() int {
+	if l == nil {
+		return -1
+	}
+	return l.data
+}
 func (l *ListNode) String() string {
 	return fmt.Sprintf("%d", l.data)
 }
@@ -70,6 +76,7 @@ func (s *SlinkedList) Append(data int) (*ListNode, error) {
 		data: data,
 	}
 	s.tail = s.tail.next
+	s.size++
 	return s.tail, nil
 }
 
