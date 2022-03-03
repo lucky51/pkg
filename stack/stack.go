@@ -12,13 +12,20 @@ type Stack[T any] struct {
 	size  int
 }
 
+func (s *Stack[T]) Size() uint {
+	return s.sList.Size()
+}
+func (s *Stack[T]) IsEmpty() bool {
+	return s.sList.Size() == 0
+}
+
 // Pop 弹出栈顶元素
 func (s *Stack[T]) Pop() (*slist.ListNode[T], error) {
 	return s.sList.Delete(0)
 }
 
 // Push添加元素
-func (s *Stack[T]) Push(data T) (*slist.ListNode[T], error) {
+func (s *Stack[T]) Push(data *T) (*slist.ListNode[T], error) {
 	return s.sList.Insert(0, data)
 }
 

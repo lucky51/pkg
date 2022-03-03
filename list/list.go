@@ -13,12 +13,12 @@ var (
 )
 
 type ListNode[T any] struct {
-	data T
+	data *T
 	next *ListNode[T]
 }
 
-func GetValue[T any](l *ListNode[T]) T {
-	var result T
+func GetValue[T any](l *ListNode[T]) *T {
+	var result *T
 	if l == nil {
 		return result
 	}
@@ -26,8 +26,8 @@ func GetValue[T any](l *ListNode[T]) T {
 
 }
 
-func (l *ListNode[T]) GetData() T {
-	var result T
+func (l *ListNode[T]) GetData() *T {
+	var result *T
 	if l == nil {
 		return result
 	}
@@ -46,14 +46,14 @@ type SlinkedList[T any] struct {
 
 // InitSlinkedList 初始化链表
 func InitSlinkedList[T any](s *SlinkedList[T]) {
-	var result T
+	var result *T
 	s.head = &ListNode[T]{
 		data: result,
 	}
 	s.tail = s.head
 }
 
-func createSLinkedlist[T any](s *SlinkedList[T], data ...T) (*ListNode[T], *ListNode[T]) {
+func createSLinkedlist[T any](s *SlinkedList[T], data ...*T) (*ListNode[T], *ListNode[T]) {
 	head := &ListNode[T]{}
 	current := head
 	for _, item := range data {
@@ -80,7 +80,7 @@ func Print[T any](s *SlinkedList[T], writer io.Writer) {
 }
 
 func (s *SlinkedList[T]) Size() uint { return s.size }
-func (s *SlinkedList[T]) Append(data T) (*ListNode[T], error) {
+func (s *SlinkedList[T]) Append(data *T) (*ListNode[T], error) {
 	if s == nil || s.head == nil {
 		return nil, ErrNotInitialized
 	}
@@ -90,6 +90,31 @@ func (s *SlinkedList[T]) Append(data T) (*ListNode[T], error) {
 	s.tail = s.tail.next
 	s.size++
 	return s.tail, nil
+}
+
+// Each 循环链表
+func (s *SlinkedList[T]) Each(f func(*ListNode[T])) error {
+	s.EachWithBreak(func(node *ListNode[T]) bool {
+		f(node)
+		return true
+	})
+	return nil
+}
+
+// Each 循环链表 f:返回false可以提前终止循环
+func (s *SlinkedList[T]) EachWithBreak(f func(*ListNode[T]) bool) error {
+	if s == nil || s.head == nil {
+		return ErrNotInitialized
+	}
+	current := s.head.next
+	for current != nil {
+		if !f(current) {
+			return nil
+		}
+		current = current.next
+	}
+	return nil
+
 }
 
 // Get 根据索引获取节点元素
@@ -118,7 +143,7 @@ func (s *SlinkedList[T]) Get(index int) (*ListNode[T], error) {
 }
 
 // Insert 插入节点
-func (s *SlinkedList[T]) Insert(index int, data T) (*ListNode[T], error) {
+func (s *SlinkedList[T]) Insert(index int, data *T) (*ListNode[T], error) {
 	if s == nil || s.head == nil {
 		return nil, ErrNotInitialized
 	}
@@ -179,7 +204,7 @@ func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
 	}
 }
 
-func NewSlinkedList[T any](data ...T) *SlinkedList[T] {
+func NewSlinkedList[T any](data ...*T) *SlinkedList[T] {
 	var s *SlinkedList[T] = new(SlinkedList[T])
 	InitSlinkedList(s)
 	s.head, s.tail = createSLinkedlist(s, data...)

@@ -10,14 +10,38 @@ type Queue[T any] struct {
 	sList *slist.SlinkedList[T]
 }
 
-// offer 添加一个元素并返回true ，如果队列已满则返回false
-func (q *Queue[T]) Offer(data T) bool {
+// Offer 添加一个元素并返回true ，如果队列已满则返回false
+func (q *Queue[T]) Offer(data *T) bool {
 	q.sList.Append(data)
 	return true
 }
 
+// Size 返回队列大小
+func (q *Queue[T]) Size() uint {
+	return q.sList.Size()
+}
+
+// Each 循环队列元素
+func (q *Queue[T]) Each(f func(*T)) error {
+	return q.sList.Each(func(ln *slist.ListNode[T]) {
+		f(ln.GetData())
+	})
+}
+
+// EachWithBreak 遍历队列 f: 如果返回false 提前终止循环
+func (q *Queue[T]) EachWithBreak(f func(*slist.ListNode[T]) bool) error {
+	return q.sList.EachWithBreak(func(ln *slist.ListNode[T]) bool {
+		return f(ln)
+	})
+}
+
+// IsEmpty 是否为空
+func (q *Queue[T]) IsEmpty() bool {
+	return q.sList.Size() == 0
+}
+
 // poll 移除并返回队列头部元素，如果队列为空，则返回nil
-func (q *Queue[T]) Poll() *slist.ListNode[T] {
+func (q *Queue[T]) Poll() *T {
 	if q.sList.Size() == 0 {
 		return nil
 	}
@@ -25,14 +49,14 @@ func (q *Queue[T]) Poll() *slist.ListNode[T] {
 	if err != nil {
 		return nil
 	}
-	return node
+	return node.GetData()
 }
 
 // peek 返回队列头部元素，如果队列为空则返回nil
-func (q *Queue[T]) Peek() *slist.ListNode[T] {
+func (q *Queue[T]) Peek() *T {
 	n, err := q.sList.Get(0)
 	if err == nil {
-		return n
+		return n.GetData()
 	}
 	fmt.Println(err)
 	return nil
