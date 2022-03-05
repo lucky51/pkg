@@ -13,29 +13,12 @@ var (
 )
 
 type ListNode[T any] struct {
-	data *T
-	next *ListNode[T]
-}
-
-func GetValue[T any](l *ListNode[T]) *T {
-	var result *T
-	if l == nil {
-		return result
-	}
-	return l.data
-
-}
-
-func (l *ListNode[T]) GetData() *T {
-	var result *T
-	if l == nil {
-		return result
-	}
-	return l.data
+	Data *T
+	Next *ListNode[T]
 }
 
 func (l *ListNode[T]) String() string {
-	return fmt.Sprintf("%d", l.data)
+	return fmt.Sprintf("%d", l.Data)
 }
 
 type SlinkedList[T any] struct {
@@ -48,17 +31,17 @@ type SlinkedList[T any] struct {
 func InitSlinkedList[T any](s *SlinkedList[T]) {
 	var result *T
 	s.head = &ListNode[T]{
-		data: result,
+		Data: result,
 	}
 	s.tail = s.head
 }
 
-func createSLinkedlist[T any](s *SlinkedList[T], data ...*T) (*ListNode[T], *ListNode[T]) {
+func createSLinkedlist[T any](s *SlinkedList[T], Data ...*T) (*ListNode[T], *ListNode[T]) {
 	head := &ListNode[T]{}
 	current := head
-	for _, item := range data {
-		current.next = &ListNode[T]{data: item}
-		current = current.next
+	for _, item := range Data {
+		current.Next = &ListNode[T]{Data: item}
+		current = current.Next
 	}
 	return head, current
 }
@@ -70,24 +53,24 @@ func Print[T any](s *SlinkedList[T], writer io.Writer) {
 	} else {
 		current := s.head
 		fmt.Fprint(writer, "head->")
-		for current.next != nil {
-			fmt.Fprintf(writer, "N:%d ->", current.data)
-			current = current.next
+		for current.Next != nil {
+			fmt.Fprintf(writer, "N:%d ->", current.Data)
+			current = current.Next
 		}
-		fmt.Fprintf(writer, "N:%d", current.data)
+		fmt.Fprintf(writer, "N:%d", current.Data)
 		fmt.Fprint(writer, "<-tail \n")
 	}
 }
 
 func (s *SlinkedList[T]) Size() uint { return s.size }
-func (s *SlinkedList[T]) Append(data *T) (*ListNode[T], error) {
+func (s *SlinkedList[T]) Append(Data *T) (*ListNode[T], error) {
 	if s == nil || s.head == nil {
 		return nil, ErrNotInitialized
 	}
-	s.tail.next = &ListNode[T]{
-		data: data,
+	s.tail.Next = &ListNode[T]{
+		Data: Data,
 	}
-	s.tail = s.tail.next
+	s.tail = s.tail.Next
 	s.size++
 	return s.tail, nil
 }
@@ -106,12 +89,12 @@ func (s *SlinkedList[T]) EachWithBreak(f func(*ListNode[T]) bool) error {
 	if s == nil || s.head == nil {
 		return ErrNotInitialized
 	}
-	current := s.head.next
+	current := s.head.Next
 	for current != nil {
 		if !f(current) {
 			return nil
 		}
-		current = current.next
+		current = current.Next
 	}
 	return nil
 
@@ -129,21 +112,21 @@ func (s *SlinkedList[T]) Get(index int) (*ListNode[T], error) {
 		return nil, ErrOutofRange
 	}
 	if index == 0 {
-		return s.head.next, nil
+		return s.head.Next, nil
 	}
-	current := s.head.next
+	current := s.head.Next
 	for i := 0; i < index; i++ {
-		if current.next == nil {
+		if current.Next == nil {
 			return nil, ErrNotFound
 		} else {
-			current = current.next
+			current = current.Next
 		}
 	}
 	return current, nil
 }
 
 // Insert 插入节点
-func (s *SlinkedList[T]) Insert(index int, data *T) (*ListNode[T], error) {
+func (s *SlinkedList[T]) Insert(index int, Data *T) (*ListNode[T], error) {
 	if s == nil || s.head == nil {
 		return nil, ErrNotInitialized
 	}
@@ -151,7 +134,7 @@ func (s *SlinkedList[T]) Insert(index int, data *T) (*ListNode[T], error) {
 		return nil, ErrOutofRange
 	}
 	newNode := &ListNode[T]{
-		data,
+		Data,
 		nil,
 	}
 	var n *ListNode[T]
@@ -165,9 +148,9 @@ func (s *SlinkedList[T]) Insert(index int, data *T) (*ListNode[T], error) {
 			return nil, err
 		}
 	}
-	temp := n.next
-	n.next = newNode
-	newNode.next = temp
+	temp := n.Next
+	n.Next = newNode
+	newNode.Next = temp
 	if index == int(s.size-1) {
 		s.tail = newNode
 	}
@@ -181,8 +164,8 @@ func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
 		return nil, ErrNotFound
 	}
 	if index == 0 {
-		temp := s.head.next
-		s.head.next = s.head.next.next
+		temp := s.head.Next
+		s.head.Next = s.head.Next.Next
 		if int(s.size-1) == 0 {
 			s.tail = s.head
 		}
@@ -193,8 +176,8 @@ func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
 		if err != nil {
 			return nil, err
 		} else {
-			deleting := n.next
-			n.next = n.next.next
+			deleting := n.Next
+			n.Next = n.Next.Next
 			if index == int(s.size-1) {
 				s.tail = n
 			}
@@ -204,10 +187,10 @@ func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
 	}
 }
 
-func NewSlinkedList[T any](data ...*T) *SlinkedList[T] {
+func NewSlinkedList[T any](Data ...*T) *SlinkedList[T] {
 	var s *SlinkedList[T] = new(SlinkedList[T])
 	InitSlinkedList(s)
-	s.head, s.tail = createSLinkedlist(s, data...)
-	s.size = uint(len(data))
+	s.head, s.tail = createSLinkedlist(s, Data...)
+	s.size = uint(len(Data))
 	return s
 }

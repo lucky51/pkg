@@ -24,7 +24,7 @@ func (q *Queue[T]) Size() uint {
 // Each 循环队列元素
 func (q *Queue[T]) Each(f func(*T)) error {
 	return q.sList.Each(func(ln *slist.ListNode[T]) {
-		f(ln.GetData())
+		f(ln.Data)
 	})
 }
 
@@ -49,14 +49,14 @@ func (q *Queue[T]) Poll() *T {
 	if err != nil {
 		return nil
 	}
-	return node.GetData()
+	return node.Data
 }
 
 // peek 返回队列头部元素，如果队列为空则返回nil
 func (q *Queue[T]) Peek() *T {
 	n, err := q.sList.Get(0)
 	if err == nil {
-		return n.GetData()
+		return n.Data
 	}
 	fmt.Println(err)
 	return nil
