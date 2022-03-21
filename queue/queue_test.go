@@ -9,23 +9,23 @@ func TestQueue(t *testing.T) {
 	q := NewQueue[int]()
 	for i := 0; i < 5; i++ {
 		temp := i
-		q.Offer(&temp)
+		q.Offer(temp)
 	}
-	q.Each(func(t *int) {
-		fmt.Printf("%d,", *t)
+	q.Each(func(t int) {
+		fmt.Printf("%d,", t)
 	})
 	fmt.Printf("\n peek last:\n")
 	l := q.PeekLast()
 	fmt.Println("peek last:", l)
 	pl := q.PollLast()
 	fmt.Println("poll last:", pl)
-	q.Each(func(t *int) {
-		fmt.Printf("%d,", *t)
+	q.Each(func(t int) {
+		fmt.Printf("%d,", t)
 	})
 	fmt.Printf("\npoll last \n")
 	q.Poll()
-	q.Each(func(t *int) {
-		fmt.Printf("%d,", *t)
+	q.Each(func(t int) {
+		fmt.Printf("%d,", t)
 	})
 	fmt.Printf("\npoll  \n")
 	// slist.Print(q.sList, os.Stdout)

@@ -25,7 +25,7 @@ func (s *Stack[T]) Pop() (*slist.ListNode[T], error) {
 }
 
 // Push添加元素
-func (s *Stack[T]) Push(data *T) (*slist.ListNode[T], error) {
+func (s *Stack[T]) Push(data T) (*slist.ListNode[T], error) {
 	return s.sList.Insert(0, data)
 }
 

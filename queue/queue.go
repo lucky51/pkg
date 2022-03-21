@@ -1,8 +1,6 @@
 package queue
 
 import (
-	"fmt"
-
 	slist "github.com/lucky51/pkg/list"
 )
 
@@ -11,7 +9,7 @@ type Queue[T any] struct {
 }
 
 // Offer 添加一个元素并返回true ，如果队列已满则返回false
-func (q *Queue[T]) Offer(data *T) bool {
+func (q *Queue[T]) Offer(data T) bool {
 	q.sList.Append(data)
 	return true
 }
@@ -22,7 +20,7 @@ func (q *Queue[T]) Size() uint {
 }
 
 // Each 循环队列元素
-func (q *Queue[T]) Each(f func(*T)) error {
+func (q *Queue[T]) Each(f func(T)) error {
 	return q.sList.Each(func(ln *slist.ListNode[T]) {
 		f(ln.Data)
 	})
@@ -41,46 +39,49 @@ func (q *Queue[T]) IsEmpty() bool {
 }
 
 // PollLast 移除并返回队尾元素
-func (q *Queue[T]) PollLast() *T {
+func (q *Queue[T]) PollLast() T {
+	var rs T
 	if q.sList.Size() == 0 {
-		return nil
+		return rs
 	}
 	node, err := q.sList.Delete(int(q.Size()) - 1)
 	if err != nil {
-		return nil
+		return rs
 	}
 	return node.Data
 }
 
-// Poll 移除并返回队列头部元素，如果队列为空，则返回nil
-func (q *Queue[T]) Poll() *T {
+// Poll 移除并返回队列头部元素，如果队列为空，则返回默认值
+func (q *Queue[T]) Poll() T {
+	var rs T
 	if q.sList.Size() == 0 {
-		return nil
+		return rs
 	}
 	node, err := q.sList.Delete(0)
 	if err != nil {
-		return nil
+		return rs
 	}
 	return node.Data
 }
 
-// Peek 返回队列头部元素，如果队列为空则返回nil
-func (q *Queue[T]) Peek() *T {
+// Peek 返回队列头部元素，如果队列为空则返回默认值
+func (q *Queue[T]) Peek() T {
 	n, err := q.sList.Get(0)
 	if err != nil {
 		return n.Data
 	}
-	fmt.Println(err)
-	return nil
+	var rs T
+	return rs
 }
 
-// PeekLast 返回队列尾部元素，如果队列为空则返回nil
-func (q *Queue[T]) PeekLast() *T {
+// PeekLast 返回队列尾部元素，如果队列为空则返回默认值
+func (q *Queue[T]) PeekLast() T {
 	n, err := q.sList.Get(int(q.Size()) - 1)
 	if err != nil {
 		return n.Data
 	}
-	return nil
+	var rs T
+	return rs
 }
 
 // NewQueue 创建队列
