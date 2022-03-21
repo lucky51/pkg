@@ -67,7 +67,7 @@ func (q *Queue[T]) Poll() T {
 // Peek 返回队列头部元素，如果队列为空则返回默认值
 func (q *Queue[T]) Peek() T {
 	n, err := q.sList.Get(0)
-	if err != nil {
+	if err == nil {
 		return n.Data
 	}
 	var rs T
