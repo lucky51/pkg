@@ -4,13 +4,32 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-func Min[T constraints.Ordered](args ...T) T {
+func MinByQsort[T constraints.Ordered](args ...T) T {
 	qsort(args)
 	return args[0]
+
 }
-func Max[T constraints.Ordered](args ...T) T {
+func MaxByQsort[T constraints.Ordered](args ...T) T {
 	qsort(args)
 	return args[len(args)-1]
+}
+func Min[T constraints.Ordered](args ...T) T {
+	res := args[0]
+	for i := 1; i < len(args); i++ {
+		if args[i] < res {
+			res = args[i]
+		}
+	}
+	return res
+}
+func Max[T constraints.Ordered](args ...T) T {
+	res := args[0]
+	for i := 1; i < len(args); i++ {
+		if args[i] > res {
+			res = args[i]
+		}
+	}
+	return res
 }
 
 // qsort quick sort
