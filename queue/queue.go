@@ -40,7 +40,19 @@ func (q *Queue[T]) IsEmpty() bool {
 	return q.sList.Size() == 0
 }
 
-// poll 移除并返回队列头部元素，如果队列为空，则返回nil
+// PollLast 移除并返回队尾元素
+func (q *Queue[T]) PollLast() *T {
+	if q.sList.Size() == 0 {
+		return nil
+	}
+	node, err := q.sList.Delete(int(q.Size()) - 1)
+	if err != nil {
+		return nil
+	}
+	return node.Data
+}
+
+// Poll 移除并返回队列头部元素，如果队列为空，则返回nil
 func (q *Queue[T]) Poll() *T {
 	if q.sList.Size() == 0 {
 		return nil
@@ -52,13 +64,22 @@ func (q *Queue[T]) Poll() *T {
 	return node.Data
 }
 
-// peek 返回队列头部元素，如果队列为空则返回nil
+// Peek 返回队列头部元素，如果队列为空则返回nil
 func (q *Queue[T]) Peek() *T {
 	n, err := q.sList.Get(0)
 	if err == nil {
 		return n.Data
 	}
 	fmt.Println(err)
+	return nil
+}
+
+// PeekLast 返回队列尾部元素，如果队列为空则返回nil
+func (q *Queue[T]) PeekLast() *T {
+	n, err := q.sList.Get(int(q.Size()) - 1)
+	if err != nil {
+		return n.Data
+	}
 	return nil
 }
 
