@@ -7,7 +7,6 @@ import (
 func MinByQsort[T constraints.Ordered](args ...T) T {
 	qsort(args)
 	return args[0]
-
 }
 func MaxByQsort[T constraints.Ordered](args ...T) T {
 	qsort(args)
