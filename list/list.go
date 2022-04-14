@@ -12,49 +12,51 @@ var (
 	ErrOutOfRange     = errors.New("out of range")
 )
 
-// ListNode ss
-type ListNode[T any] struct {
+// Node ss
+type Node[T any] struct {
 	Data T
-	Next *ListNode[T]
+	Next *Node[T]
 }
 
-func (l *ListNode[T]) String() string {
+func (l *Node[T]) String() string {
 	return fmt.Sprintf("%d", l.Data)
 }
 
-type SlinkedList[T any] struct {
+type SLinkedList[T any] struct {
 	size int
-	head *ListNode[T]
-	tail *ListNode[T]
+	head *Node[T]
+	tail *Node[T]
 }
 
 // InitSlinkedList 初始化链表
-func InitSlinkedList[T any](s *SlinkedList[T]) {
+func InitSlinkedList[T any](s *SLinkedList[T]) {
 	var result T
-	s.head = &ListNode[T]{
+	s.head = &Node[T]{
 		Data: result,
 	}
 	s.tail = s.head
 }
 
-func createSLinkedList[T any](s *SlinkedList[T], Data ...T) (*ListNode[T], *ListNode[T]) {
-	var head, current *ListNode[T]
+func createSLinkedList[T any](s *SLinkedList[T], Data ...T) (*Node[T], *Node[T]) {
+	var head, current *Node[T]
 	for _, item := range Data {
 		if current == nil {
-			current = &ListNode[T]{
+			current = &Node[T]{
 				Data: item,
 			}
 			head = current
 		} else {
-			current.Next = &ListNode[T]{Data: item}
+			current.Next = &Node[T]{Data: item}
 		}
-		current = current.Next
+		if current.Next != nil {
+			current = current.Next
+		}
 	}
 	return head, current
 }
 
 // Print 打印链表
-func Print[T any](s *SlinkedList[T], writer io.Writer) {
+func Print[T any](s *SLinkedList[T], writer io.Writer) {
 	if s == nil || s.head == nil {
 		fmt.Fprintf(writer, "null")
 	} else {
@@ -69,12 +71,12 @@ func Print[T any](s *SlinkedList[T], writer io.Writer) {
 	}
 }
 
-func (s *SlinkedList[T]) Size() int { return s.size }
-func (s *SlinkedList[T]) Append(Data T) (*ListNode[T], error) {
-	if s == nil || s.head == nil {
+func (s *SLinkedList[T]) Size() int { return s.size }
+func (s *SLinkedList[T]) Append(Data T) (*Node[T], error) {
+	if s == nil {
 		return nil, ErrNotInitialized
 	}
-	s.tail.Next = &ListNode[T]{
+	s.tail.Next = &Node[T]{
 		Data: Data,
 	}
 	s.tail = s.tail.Next
@@ -83,8 +85,8 @@ func (s *SlinkedList[T]) Append(Data T) (*ListNode[T], error) {
 }
 
 // Each 循环链表
-func (s *SlinkedList[T]) Each(f func(*ListNode[T])) error {
-	s.EachWithBreak(func(node *ListNode[T]) bool {
+func (s *SLinkedList[T]) Each(f func(*Node[T])) error {
+	s.EachWithBreak(func(node *Node[T]) bool {
 		f(node)
 		return true
 	})
@@ -92,7 +94,7 @@ func (s *SlinkedList[T]) Each(f func(*ListNode[T])) error {
 }
 
 // EachWithBreak 循环链表 f:返回false可以提前终止循环
-func (s *SlinkedList[T]) EachWithBreak(f func(*ListNode[T]) bool) error {
+func (s *SLinkedList[T]) EachWithBreak(f func(*Node[T]) bool) error {
 	if s == nil {
 		return ErrNotInitialized
 	}
@@ -108,7 +110,7 @@ func (s *SlinkedList[T]) EachWithBreak(f func(*ListNode[T]) bool) error {
 }
 
 // Get 根据索引获取节点元素
-func (s *SlinkedList[T]) Get(index int) (*ListNode[T], error) {
+func (s *SLinkedList[T]) Get(index int) (*Node[T], error) {
 	if s == nil {
 		return nil, ErrNotInitialized
 	}
@@ -123,7 +125,7 @@ func (s *SlinkedList[T]) Get(index int) (*ListNode[T], error) {
 	}
 	current := s.head
 	var i int = 0
-	for ; i <= index && current != nil; i++ {
+	for ; i < index && current != nil; i++ {
 		if current.Next != nil {
 			current = current.Next
 		}
@@ -135,58 +137,65 @@ func (s *SlinkedList[T]) Get(index int) (*ListNode[T], error) {
 }
 
 // Insert 插入节点
-func (s *SlinkedList[T]) Insert(index int, Data T) (*ListNode[T], error) {
+func (s *SLinkedList[T]) Insert(index int, Data T) (*Node[T], error) {
 	if s == nil {
 		return nil, ErrNotInitialized
 	}
 	if index < 0 || index >= int(s.size) {
 		return nil, ErrOutOfRange
 	}
-	newNode := &ListNode[T]{
+	newNode := &Node[T]{
 		Data,
 		nil,
 	}
-	if index-1 < 1 {
-		index = 0
+	prevIndex := index - 1
+	if prevIndex < 1 {
+		prevIndex = 0
 	}
-	n, err := s.Get(index)
+	n, err := s.Get(prevIndex)
 
-	if err != nil {
-		return nil, err
+	if err == ErrNotFound {
+		s.head = newNode
+		s.tail = s.head
+		return s.head, nil
 	}
-	temp := n.Next
-	n.Next = newNode
-	newNode.Next = temp
-	if index == int(s.size-1) {
-		s.tail = newNode
+
+	if prevIndex == 0 {
+		newNode.Next = n
+		s.head = newNode
+	} else {
+		temp := n.Next
+		n.Next = newNode
+		newNode.Next = temp
+		if index == int(s.size-1) {
+			s.tail = newNode
+		}
 	}
 	s.size++
 	return s.tail, nil
 }
 
 // Delete 删除链表元素
-func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
+func (s *SLinkedList[T]) Delete(index int) (*Node[T], error) {
 	if s.size < 1 {
 		return nil, ErrNotFound
 	}
 	if index < 0 || index > int(s.size-1) {
-
+		return nil, ErrOutOfRange
 	}
-	var deletedItem *ListNode[T]
+	var deletedItem *Node[T]
 	prevIndex := index - 1
 	if prevIndex < 0 {
 		prevIndex = 0
 	}
 	if prevIndex == index {
 		deletedItem = s.head
-		s.head = nil
+		s.head = s.head.Next
 		s.tail = nil
 		s.size--
 	} else {
-		n, err := s.Get(prevIndex)
-		if err != nil {
-			return nil, err
-		}
+		n, _ := s.Get(prevIndex)
+		fmt.Println("delted get:", prevIndex, n)
 		deletedItem = n.Next
 		n.Next = n.Next.Next
 		s.size--
@@ -198,8 +207,8 @@ func (s *SlinkedList[T]) Delete(index int) (*ListNode[T], error) {
 }
 
 // NewSLinkedList 创建链表
-func NewSLinkedList[T any](Data ...T) *SlinkedList[T] {
-	var s *SlinkedList[T] = new(SlinkedList[T])
+func NewSLinkedList[T any](Data ...T) *SLinkedList[T] {
+	var s *SLinkedList[T] = new(SLinkedList[T])
 	InitSlinkedList(s)
 	s.head, s.tail = createSLinkedList(s, Data...)
 	s.size = len(Data)

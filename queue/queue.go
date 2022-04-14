@@ -5,7 +5,7 @@ import (
 )
 
 type Queue[T any] struct {
-	sList *slist.SlinkedList[T]
+	sList *slist.SLinkedList[T]
 }
 
 // Offer 添加一个元素并返回true ，如果队列已满则返回false
@@ -15,20 +15,20 @@ func (q *Queue[T]) Offer(data T) bool {
 }
 
 // Size 返回队列大小
-func (q *Queue[T]) Size() uint {
+func (q *Queue[T]) Size() int {
 	return q.sList.Size()
 }
 
 // Each 循环队列元素
 func (q *Queue[T]) Each(f func(T)) error {
-	return q.sList.Each(func(ln *slist.ListNode[T]) {
+	return q.sList.Each(func(ln *slist.Node[T]) {
 		f(ln.Data)
 	})
 }
 
 // EachWithBreak 遍历队列 f: 如果返回false 提前终止循环
-func (q *Queue[T]) EachWithBreak(f func(*slist.ListNode[T]) bool) error {
-	return q.sList.EachWithBreak(func(ln *slist.ListNode[T]) bool {
+func (q *Queue[T]) EachWithBreak(f func(*slist.Node[T]) bool) error {
+	return q.sList.EachWithBreak(func(ln *slist.Node[T]) bool {
 		return f(ln)
 	})
 }
@@ -86,7 +86,7 @@ func (q *Queue[T]) PeekLast() T {
 
 // NewQueue 创建队列
 func NewQueue[T any]() *Queue[T] {
-	var s *slist.SlinkedList[T] = new(slist.SlinkedList[T])
+	var s *slist.SLinkedList[T] = new(slist.SLinkedList[T])
 	slist.InitSlinkedList(s)
 	return &Queue[T]{sList: s}
 }

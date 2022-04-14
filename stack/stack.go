@@ -8,11 +8,11 @@ import (
 )
 
 type Stack[T any] struct {
-	sList *slist.SlinkedList[T]
+	sList *slist.SLinkedList[T]
 	size  int
 }
 
-func (s *Stack[T]) Size() uint {
+func (s *Stack[T]) Size() int {
 	return s.sList.Size()
 }
 func (s *Stack[T]) IsEmpty() bool {
@@ -20,26 +20,26 @@ func (s *Stack[T]) IsEmpty() bool {
 }
 
 // Pop 弹出栈顶元素
-func (s *Stack[T]) Pop() (*slist.ListNode[T], error) {
+func (s *Stack[T]) Pop() (*slist.Node[T], error) {
 	return s.sList.Delete(0)
 }
 
-// Push添加元素
-func (s *Stack[T]) Push(data T) (*slist.ListNode[T], error) {
+// Push 添加元素
+func (s *Stack[T]) Push(data T) (*slist.Node[T], error) {
 	return s.sList.Insert(0, data)
 }
 
 // Peek 获取栈顶元素
-func (s *Stack[T]) Peek() (*slist.ListNode[T], error) {
+func (s *Stack[T]) Peek() (*slist.Node[T], error) {
 	return s.sList.Get(0)
 }
 
 // NewStack 创建栈
 func NewStack[T any]() *Stack[T] {
-	var s *slist.SlinkedList[T] = new(slist.SlinkedList[T])
+	var s *slist.SLinkedList[T] = new(slist.SLinkedList[T])
 	slist.InitSlinkedList(s)
 	return &Stack[T]{
-		sList: new(slist.SlinkedList[T]),
+		sList: new(slist.SLinkedList[T]),
 	}
 }
 
