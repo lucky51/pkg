@@ -4,6 +4,9 @@ import (
 	slist "github.com/lucky51/pkg/list"
 )
 
+//type Queuer interface {
+//	Offer[T any](data T) bool
+//}
 type Queue[T any] struct {
 	sList *slist.SLinkedList[T]
 }
@@ -87,6 +90,5 @@ func (q *Queue[T]) PeekLast() T {
 // NewQueue 创建队列
 func NewQueue[T any]() *Queue[T] {
 	var s *slist.SLinkedList[T] = new(slist.SLinkedList[T])
-	slist.InitSlinkedList(s)
 	return &Queue[T]{sList: s}
 }

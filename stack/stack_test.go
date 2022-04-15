@@ -21,4 +21,5 @@ func TestStack(t *testing.T) {
 	assert.True(t, stk.Size() == 4)
 	item, _ := stk.Pop()
 	fmt.Println(item)
+	stk.Print(os.Stdout)
 }

@@ -36,8 +36,6 @@ func (s *Stack[T]) Peek() (*slist.Node[T], error) {
 
 // NewStack 创建栈
 func NewStack[T any]() *Stack[T] {
-	var s *slist.SLinkedList[T] = new(slist.SLinkedList[T])
-	slist.InitSlinkedList(s)
 	return &Stack[T]{
 		sList: new(slist.SLinkedList[T]),
 	}

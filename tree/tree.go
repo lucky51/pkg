@@ -2,17 +2,19 @@ package tree
 
 import (
 	"fmt"
+	"golang.org/x/exp/constraints"
 )
 
-type TreeNode struct {
-	Val         int
-	Left, Right *TreeNode
+// Node tree节点
+type Node[T constraints.Ordered] struct {
+	Val         T
+	Left, Right *Node[T]
 }
 
-func (n *TreeNode) String() string {
-	return fmt.Sprintf("%d ,l=>%p,r=>%p", n.Val, n.Left, n.Right)
+func (n *Node) String() string {
+	return fmt.Sprintf("%v ,l=>%p,r=>%p", n.Val, n.Left, n.Right)
 }
-func PreOrderTree(root *TreeNode) {
+func PreOrderTree[T constraints.Ordered](root *Node[T]) {
 	if root == nil {
 		return
 	}
@@ -20,7 +22,7 @@ func PreOrderTree(root *TreeNode) {
 	PreOrderTree(root.Left)
 	PreOrderTree(root.Right)
 }
-func MiddleOrderTree(root *TreeNode) {
+func MiddleOrderTree[T constraints.Ordered](root *Node[T]) {
 	if root == nil {
 		return
 	}
@@ -28,18 +30,18 @@ func MiddleOrderTree(root *TreeNode) {
 	fmt.Println("tree node:", root.Val)
 	MiddleOrderTree(root.Right)
 }
-func PostOrderTree(root *TreeNode) {
+func PostOrderTree[T constraints.Ordered](root *Node[T]) {
 	if root == nil {
 		return
 	}
 	PostOrderTree(root.Left)
 	PostOrderTree(root.Right)
-	fmt.Println("tree node:", root.Val)
+	fmt.Printf("tree node: %v", root.Val)
 }
 
-func Insert(root *TreeNode, val int) *TreeNode {
+func Insert[T constraints.Ordered](root *Node[T], val T) *Node[T] {
 	if root == nil {
-		return &TreeNode{Val: val}
+		return &Node[T]{Val: val}
 	}
 	if val < root.Val {
 		root.Left = Insert(root.Left, val)
@@ -49,9 +51,9 @@ func Insert(root *TreeNode, val int) *TreeNode {
 	return root
 }
 
-func Insert1(root *TreeNode, val int) *TreeNode {
+func Insert1[T constraints.Ordered](root *Node[T], val T) *Node[T] {
 	if root == nil {
-		return &TreeNode{Val: val}
+		return &Node[T]{Val: val}
 	}
 	if root.Left == nil {
 		root.Left = Insert1(root.Left, val)
@@ -63,15 +65,15 @@ func Insert1(root *TreeNode, val int) *TreeNode {
 	return root
 }
 
-func CreateBiTree() *TreeNode {
+func CreateBiTree() *Node[int] {
 	var input int
-	var root *TreeNode
+	var root *Node[int]
 	for {
 		_, err := fmt.Scanf("%d\n", &input)
 		if err != nil {
 			break
 		}
-		root = Insert1(root, input)
+		root = Insert1[int](root, input)
 	}
 	return root
 }
